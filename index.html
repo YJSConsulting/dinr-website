@@ -279,20 +279,39 @@
             <div class="cta-content reveal">
                 <h2 class="section-title">Get it first.</h2>
                 <p class="section-sub">We're about to go live on the App Store. Drop your email and we'll let you know when it's ready.</p>
-                <form class="waitlist-form" action="https://formsubmit.co/yuvi@dinrai.com" method="POST">
-                    <!-- FormSubmit config -->
-                    <input type="hidden" name="_subject" value="New DINR.ai Waitlist Signup">
-                    <input type="hidden" name="_captcha" value="false">
-                    <input type="hidden" name="_template" value="table">
-                    <input type="hidden" name="_next" value="https://www.dinrai.com/thanks.html">
+                <form class="waitlist-form" id="waitlistForm">
                     <input type="text" name="_honey" style="display:none">
-
                     <div class="form-row">
-                        <input type="text" name="name" placeholder="Your name" required class="form-input">
-                        <input type="email" name="email" placeholder="Your email" required class="form-input">
-                        <button type="submit" class="btn btn-primary btn-lg form-btn">Join Waitlist</button>
+                        <input type="text" name="name" placeholder="Your name" required class="form-input" id="wl-name">
+                        <input type="email" name="email" placeholder="Your email" required class="form-input" id="wl-email">
+                        <button type="submit" class="btn btn-primary btn-lg form-btn" id="wl-btn">Join Waitlist</button>
                     </div>
                 </form>
+                <script>
+                document.getElementById('waitlistForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    var btn = document.getElementById('wl-btn');
+                    var name = document.getElementById('wl-name').value;
+                    var email = document.getElementById('wl-email').value;
+                    if (document.querySelector('[name="_honey"]').value) return;
+                    btn.textContent = 'Joining...';
+                    btn.disabled = true;
+                    fetch('https://script.google.com/macros/s/AKfycbznN86lmoaRoeObfO3JISn14YOw-JTNv8rdM3Qzduri3EprTMEYuFGjqvYML1mqq56T7g/exec', {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                        body: 'name=' + encodeURIComponent(name) + '&email=' + encodeURIComponent(email)
+                    }).then(function() {
+                        btn.textContent = "You're in!";
+                        document.getElementById('wl-name').value = '';
+                        document.getElementById('wl-email').value = '';
+                        setTimeout(function() { btn.textContent = 'Join Waitlist'; btn.disabled = false; }, 3000);
+                    }).catch(function() {
+                        btn.textContent = 'Try again';
+                        btn.disabled = false;
+                    });
+                });
+                </script>
                 <p class="waitlist-note">One email when we launch. That's it.</p>
             </div>
         </div>
